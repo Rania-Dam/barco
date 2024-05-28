@@ -1,61 +1,84 @@
-package barcos;
+package prueba;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class Board {
-    private char[][] grid; // Declaración de una matriz bidimensional para representar el tablero.
+    private char[][] board;
+    private List<Ship> shipsList;
 
-    // Constructor de la clase Board que inicializa el tablero con el tamaño dado.
-    public Board(int size) {
-        grid = new char[size][size]; // Inicializa la matriz con el tamaño especificado.
-        initializeBoard(); // Llama al método para inicializar el tablero con valores predeterminados.
+    public Board(int rows, int cols) {
+        board = new char[rows][cols];
+        shipsList = new ArrayList<>();
+        initializeBoard();
     }
 
-    // Método para inicializar el tablero, rellenando cada celda con el carácter '-'.
     private void initializeBoard() {
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[i].length; j++) {
-                grid[i][j] = '-'; // Cada celda se establece en '-' indicando que está vacía.
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                board[i][j] = '-';
             }
         }
     }
 
-    // Método para colocar un barco en el tablero.
-    public void placeShip(Ship ship) {
-        for (Coordinate coord : ship.getPositions()) {
-            grid[coord.getRow()][coord.getCol()] = 'L'; // Marca la posición del barco en el tablero con 'L'.
+    public void placeShips() {
+        Random random = new Random();
+        for (int i = 0; i < 10; i++) {
+            Ship ship;
+            do {
+                ship = new Ship();
+                int row = random.nextInt(10);
+                int col = random.nextInt(10);
+                ship.addCoordinate(new Coordinate(row, col));
+            } while (!isPlacementValid(ship));
+            placeShip(ship);
+            shipsList.add(ship);
         }
     }
 
-    // Método para verificar si la colocación de un barco es válida.
-    public boolean isPlacementValid(Ship ship) {
-        for (Coordinate coord : ship.getPositions()) {
-            // Si alguna de las posiciones del barco ya está ocupada, devuelve false.
-            if (grid[coord.getRow()][coord.getCol()] != '-') {
+    private void placeShip(Ship ship) {
+        for (Coordinate coord : ship.getCoordinates()) {
+            board[coord.getRow()][coord.getCol()] = 'L';
+        }
+    }
+
+    private boolean isPlacementValid(Ship ship) {
+        for (Coordinate coord : ship.getCoordinates()) {
+            if (board[coord.getRow()][coord.getCol()] != '-') {
                 return false;
             }
         }
-        return true; // Devuelve true si todas las posiciones del barco están libres.
+        return true;
     }
 
-    // Método para actualizar una celda del tablero con un símbolo específico.
-    public void updateBoard(Coordinate coord, char symbol) {
-        grid[coord.getRow()][coord.getCol()] = symbol; // Actualiza la celda con el símbolo dado.
-    }
-
-    // Método para obtener el valor en una posición específica del tablero.
-    public char getPosition(Coordinate coord) {
-        return grid[coord.getRow()][coord.getCol()]; // Devuelve el carácter en la posición especificada.
-    }
-
-    // Método para mostrar el tablero en la consola.
     public void display() {
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[i].length; j++) {
-                System.out.print(grid[i][j] + " "); // Imprime cada celda seguida de un espacio.
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                System.out.print(board[i][j] + " ");
             }
-            System.out.println(); // Nueva línea después de cada fila.
+            System.out.println();
         }
     }
+
+    public char shootAt(Coordinate coord) {
+        return board[coord.getRow()][coord.getCol()];
+    }
+
+    public void markHit(Coordinate coord) {
+        board[coord.getRow()][coord.getCol()] = 'X';
+    }
+
+    public void markMiss(Coordinate coord) {
+        board[coord.getRow()][coord.getCol()] = 'A';
+    }
+
+    public boolean allShipsSunk() {
+        for (Ship ship : shipsList) {
+            if (!ship.isSunk(board)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
-
-
-

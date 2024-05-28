@@ -1,20 +1,44 @@
+package prueba;
+
 public class Coordinate {
-    private int row; // Almacena la fila de la coordenada.
-    private int col; // Almacena la columna de la coordenada.
+    private int row;
+    private int col;
 
-    // Constructor de la clase Coordinate que inicializa las variables de instancia.
     public Coordinate(int row, int col) {
-        this.row = row; // Inicializa la fila con el valor proporcionado.
-        this.col = col; // Inicializa la columna con el valor proporcionado.
+        this.row = row;
+        this.col = col;
     }
 
-    // Método para obtener el valor de la fila.
     public int getRow() {
-        return row; // Devuelve el valor de la fila.
+        return row;
     }
 
-    // Método para obtener el valor de la columna.
     public int getCol() {
-        return col; // Devuelve el valor de la columna.
+        return col;
+    }
+
+    public static Coordinate parseInput(String input) {
+        if (input.length() != 2) return null;
+        char rowChar = input.charAt(0);
+        char colChar = input.charAt(1);
+        int row = rowChar - 'A';
+        int col = colChar - '0';
+        if (row < 0 || row >= 10 || col < 0 || col >= 10) {
+            return null;
+        }
+        return new Coordinate(row, col);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Coordinate that = (Coordinate) obj;
+        return row == that.row && col == that.col;
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * row + col;
     }
 }
